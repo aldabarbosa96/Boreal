@@ -21,11 +21,10 @@ public class Lwjgl3Launcher {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle("Boreal");
 
-        /* Ventana border-less ligeramente más pequeña (evita cualquier optimización fullscreen). */
-        cfg.setDecorated(false);
-        cfg.setResizable(false);
+        cfg.setDecorated(true);
+        cfg.setResizable(true);
         com.badlogic.gdx.Graphics.DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode();
-        cfg.setWindowedMode(dm.width - 2, dm.height - 2); // 1 px de margen cada lado
+        cfg.setWindowedMode(dm.width, dm.height);
 
         cfg.useVsync(true);
         cfg.setForegroundFPS(dm.refreshRate);

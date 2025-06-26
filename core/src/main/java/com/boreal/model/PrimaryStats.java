@@ -11,18 +11,17 @@ public final class PrimaryStats implements Serializable {
 
     /* ───── ENUM ───── */
     public enum Stat {
-        STRENGTH("Fuerza"),
-        AGILITY("Agilidad"),
-        ENDURANCE("Resistencia"),
-        INTELLIGENCE("Inteligencia"),
-        PERCEPTION("Percepción"),
-        CHARISMA("Carisma"),
-        WILLPOWER("Voluntad"),
-        LUCK("Suerte");
+        STRENGTH("STRENGTH"), AGILITY("AGILITY"), ENDURANCE("ENDURANCE"), INTELLIGENCE("INTELLIGENCE"), PERCEPTION("PERCEPTION"), CHARISMA("CHARISMA"), WILLPOWER("WILLPOWER"), LUCK("LUCK");
 
         private final String label;
-        Stat(String label) { this.label = label; }
-        public String label() { return label; }
+
+        Stat(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
+        }
     }
 
     /* ───── CONFIG ───── */
@@ -36,17 +35,35 @@ public final class PrimaryStats implements Serializable {
 
     /* ───── CONSTRUCTOR ───── */
     public PrimaryStats() {
-        for (Stat s : Stat.values()) values.put(s, INITIAL_VALUE);
+        reset();
     }
 
     /* ───── GETTERS ───── */
-    public int get(Stat s)               { return values.get(s); }
-    public int getRemainingPoints()      { return remainingPoints; }
-    public Map<Stat,Integer> asMap()     { return Map.copyOf(values); }
+    public int get(Stat s) {
+        return values.get(s);
+    }
+
+    public int getRemainingPoints() {
+        return remainingPoints;
+    }
+
+    public Map<Stat, Integer> asMap() {
+        return Map.copyOf(values);
+    }
 
     /* ───── ACCIONES ───── */
 
-    /** Sube +1 la stat si hay puntos suficientes. */
+    /**
+     * Restaura todos los valores y puntos libres al estado inicial.
+     */
+    public void reset() {
+        for (Stat s : Stat.values()) values.put(s, INITIAL_VALUE);
+        remainingPoints = INITIAL_POINTS;
+    }
+
+    /**
+     * Sube +1 la stat si hay puntos suficientes.
+     */
     public boolean raise(Stat s) {
         int cost = costToRaise(values.get(s));
         if (cost > remainingPoints || values.get(s) >= MAX) return false;
@@ -55,7 +72,9 @@ public final class PrimaryStats implements Serializable {
         return true;
     }
 
-    /** Baja –1 la stat (nunca por debajo del valor inicial) y devuelve puntos. */
+    /**
+     * Baja –1 la stat (nunca por debajo del valor inicial) y devuelve puntos.
+     */
     public boolean lower(Stat s) {
         int current = values.get(s);
         if (current <= INITIAL_VALUE) return false;
@@ -66,15 +85,17 @@ public final class PrimaryStats implements Serializable {
     }
 
     /* ───── COSTE ESCALONADO ───── */
-
     private static int costToRaise(int fromValue) {
         if (fromValue >= 99) return Integer.MAX_VALUE;
-        if (fromValue < 40)  return 1;
-        if (fromValue < 70)  return 2;
-        if (fromValue < 90)  return 4;
+        if (fromValue < 40) return 1;
+        if (fromValue < 70) return 2;
+        if (fromValue < 90) return 4;
         return 6; // 90-99
     }
 
     /* ───── DEBUG ───── */
-    @Override public String toString() { return values + " | pts=" + remainingPoints; }
+    @Override
+    public String toString() {
+        return values + " | pts=" + remainingPoints;
+    }
 }
