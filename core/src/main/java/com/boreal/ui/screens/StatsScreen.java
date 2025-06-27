@@ -43,18 +43,21 @@ public final class StatsScreen extends ScreenAdapter {
     private final Skin skin;
     private final PrimaryStats stats;
     private final Runnable onAccept;
+    private final String playerName;
 
-    private Label pointsLabel;
+    private Label nameLabel;
+    private Label remainingLabel;
     private TextButton acceptBtn;
     private TextButton resetBtn;
 
     private final EnumMap<PrimaryStats.Stat, Label> valueLabels = new EnumMap<>(PrimaryStats.Stat.class);
 
     // ───────────────────────── ctor ─────────────────────────
-    public StatsScreen(Skin skin, PrimaryStats stats, Runnable onAccept) {
+    public StatsScreen(Skin skin, PrimaryStats stats, Runnable onAccept, String playerName) {
         this.skin = skin;
         this.stats = stats;
         this.onAccept = onAccept;
+        this.playerName = playerName;
 
         ensureWin95Font(skin);
 
@@ -81,15 +84,12 @@ public final class StatsScreen extends ScreenAdapter {
         Table header = new Table();
         header.setBackground(makeTitleBackground());
 
-        pointsLabel = new Label("Remaining points: " + stats.getRemainingPoints(), skin, "win95-title-label");
-        pointsLabel.setAlignment(Align.left);
-        header.add(pointsLabel).left().expandX().fillX().pad(4, 6, 4, 6);
+        nameLabel = new Label("Player: " + playerName, skin, "win95-title-label");
+        nameLabel.setAlignment(Align.left);
+        header.add(nameLabel).left().expandX().fillX().pad(4, 6, 4, 6);
 
-        // ↑ ahora la ventana tendrá 5 columnas (icono + 4 anteriores)
-        Cell<?> headerCell = win95.add(header).colspan(5).fillX();
-        headerCell.pad(-2, -2, 2, -2);
+        win95.add(header).colspan(5).fillX().pad(-2, -2, 2, -2);
         win95.row();
-
         win95.defaults().pad(8);
 
         /*── Tabla de estadísticas ─────────────────────────*/
@@ -100,7 +100,7 @@ public final class StatsScreen extends ScreenAdapter {
 
             // 1️⃣  Icono
             Texture iconTex = manager.get("icons/" + s.name().toLowerCase() + ".png", Texture.class);
-            iconTex.setFilter(TextureFilter.Nearest, TextureFilter.Nearest); // pixel-perfect
+            iconTex.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
             Image iconImg = new Image(new TextureRegionDrawable(iconTex));
 
             // 2️⃣  Nombre y valor de la stat
@@ -109,7 +109,7 @@ public final class StatsScreen extends ScreenAdapter {
             valueLabels.put(s, value);
 
             // 3️⃣  Botones ±
-            TextButton minus = new TextButton("- ", skin, "win95");
+            TextButton minus = new TextButton("-", skin, "win95");
             TextButton plus = new TextButton("+", skin, "win95");
 
             ChangeListener refresher = new ChangeListener() {
@@ -123,7 +123,7 @@ public final class StatsScreen extends ScreenAdapter {
                 @Override
                 public void changed(ChangeEvent e, Actor a) {
                     if (stats.raise(s)) {
-                        value.setText(stats.get(s) + "");
+                        value.setText(String.valueOf(stats.get(s)));
                         refresher.changed(e, a);
                     }
                 }
@@ -132,7 +132,7 @@ public final class StatsScreen extends ScreenAdapter {
                 @Override
                 public void changed(ChangeEvent e, Actor a) {
                     if (stats.lower(s)) {
-                        value.setText(stats.get(s) + "");
+                        value.setText(String.valueOf(stats.get(s)));
                         refresher.changed(e, a);
                     }
                 }
@@ -146,6 +146,11 @@ public final class StatsScreen extends ScreenAdapter {
             content.add(plus).size(32, 32);
             content.row();
         }
+
+        /*── Label de puntos restantes justo debajo de las stats ───────────────────*/
+        remainingLabel = new Label("Remaining Points: " + stats.getRemainingPoints(), skin, "win95-label-black");
+        content.row().padTop(16);
+        content.add(remainingLabel).colspan(5).center();
 
         /*── Fila de botones ───────────────────────────────*/
         content.row().padTop(24).padBottom(12);
@@ -176,19 +181,17 @@ public final class StatsScreen extends ScreenAdapter {
 
         content.add(btnRow).colspan(5).center();
 
-        /*── Márgenes interiores ───────────────────────────*/
+        /*── Añadir content al frame Win95 ───────────────────────────*/
         win95.row();
         win95.add(content).colspan(5).padLeft(12).padRight(12).padBottom(12).fillX();
     }
 
-
     /*────────── Utilidades de refresco y teclado ──────────*/
     private void refreshControls() {
-        pointsLabel.setText("Remaining points: " + stats.getRemainingPoints());
+        remainingLabel.setText("Remaining Points: " + stats.getRemainingPoints());
         boolean ready = stats.getRemainingPoints() == 0;
         acceptBtn.setDisabled(!ready);
 
-        // marco negro sólo si es la acción predeterminada
         String style = ready ? "win95-default" : "win95";
         acceptBtn.setStyle(skin.get(style, TextButton.TextButtonStyle.class));
     }
@@ -208,7 +211,10 @@ public final class StatsScreen extends ScreenAdapter {
 
     /*───────────── Registro de fuentes y estilos ───────────*/
     private void ensureWin95Font(Skin sk) {
-        if (sk.has("font-win95", BitmapFont.class) && sk.has("font-win95-title", BitmapFont.class)) return;
+        // Comprueba ahora también los estilos de botón
+        if (sk.has("win95", TextButton.TextButtonStyle.class) && sk.has("win95-default", TextButton.TextButtonStyle.class) && sk.has("font-win95", BitmapFont.class) && sk.has("font-win95-title", BitmapFont.class)) {
+            return;
+        }
 
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IBMPlexSans-Regular.ttf"));
 
@@ -236,16 +242,19 @@ public final class StatsScreen extends ScreenAdapter {
         sk.add("win95-label-white", new Label.LabelStyle(font14, Color.WHITE));
         sk.add("win95-title-label", new Label.LabelStyle(font18, Color.WHITE));
 
+        // Estilo normal de botón
         TextButton.TextButtonStyle normal = new TextButton.TextButtonStyle(makeBtnBg(false), makeBtnBg(true), null, null);
         normal.font = font14;
         normal.fontColor = WIN95_TEXT;
         sk.add("win95", normal);
 
+        // Estilo por defecto (cuando está activado)
         TextButton.TextButtonStyle def = new TextButton.TextButtonStyle(makeBtnBgDefault(false), makeBtnBgDefault(true), null, null);
         def.font = font14;
         def.fontColor = WIN95_TEXT;
         sk.add("win95-default", def);
     }
+
 
     /*───────── Fabricas de gráficos Win95 ─────────────────*/
     private NinePatchDrawable makeWin95Frame() {
@@ -264,7 +273,7 @@ public final class StatsScreen extends ScreenAdapter {
         pm.drawRectangle(1, 1, S - 2, S - 2);
 
         NinePatch np = new NinePatch(new Texture(pm), B, B, B, B);
-        return new NinePatchDrawable(np);               // no dispose: Texture se encarga
+        return new NinePatchDrawable(np);
     }
 
     private Drawable makeTitleBackground() {
@@ -293,22 +302,15 @@ public final class StatsScreen extends ScreenAdapter {
         return new NinePatchDrawable(np);
     }
 
-    /**
-     * Botón predeterminado: mismo relieve con borde negro exterior
-     */
     private NinePatchDrawable makeBtnBgDefault(boolean pressed) {
-        int S = 34, B = 4;                               // +2 px ancho/alto
+        int S = 34, B = 4;
         Pixmap pm = new Pixmap(S, S, Pixmap.Format.RGBA8888);
 
-        // marco negro exterior
         pm.setColor(Color.BLACK);
         pm.fill();
-
-        // fondo gris del botón dentro del marco
         pm.setColor(WIN95_FACE);
         pm.fillRectangle(1, 1, S - 2, S - 2);
 
-        // relieve interior
         if (!pressed) {
             pm.setColor(WIN95_HIGHLIGHT);
             pm.drawLine(1, 1, S - 3, 1);
@@ -323,7 +325,7 @@ public final class StatsScreen extends ScreenAdapter {
         pm.drawLine(S - 2, 1, S - 2, S - 2);
 
         NinePatch np = new NinePatch(new Texture(pm), B, B, B, B);
-        return new NinePatchDrawable(np);               // Texture gestiona el Pixmap
+        return new NinePatchDrawable(np);
     }
 
     // ───────────── lifecycle ──────────────────────────────

@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.boreal.assets.GameAssets;
 import com.boreal.model.PrimaryStats;
 import com.boreal.ui.screens.JobScreen;
+import com.boreal.ui.screens.NameScreen;
 import com.boreal.ui.screens.StatsScreen;
 
 public final class MainGame extends ApplicationAdapter {
@@ -18,17 +19,21 @@ public final class MainGame extends ApplicationAdapter {
 
     @Override
     public void create() {
-
+        // Carga de assets y skin como antes
         GameAssets.queue();
         GameAssets.finishLoading();
         assets = new GameAssets();
-
         skin = new Skin(Gdx.files.internal("uiskin.json"));
-        PrimaryStats stats = new PrimaryStats();
 
-        StatsScreen first = new StatsScreen(skin, stats, () -> setScreen(new JobScreen()));
-        setScreen(first);
+        // Arrancamos pidiendo el nombre
+        setScreen(new NameScreen(skin, name -> {
+            // Una vez entrado el nombre, creamos las stats y lanzamos StatsScreen
+            PrimaryStats stats = new PrimaryStats();
+            StatsScreen statsScreen = new StatsScreen(skin, stats, () -> setScreen(new JobScreen()), name);
+            setScreen(statsScreen);
+        }));
     }
+
 
     private void setScreen(Screen newScreen) {
         if (screen != null) screen.dispose();
