@@ -139,7 +139,7 @@ public final class StatsScreen extends ScreenAdapter {
             });
 
             /*── Añadir fila completa ──────────────────────*/
-            content.add(iconImg).size(32, 32).padRight(6);
+            content.add(iconImg).size(26, 26).padRight(6);
             content.add(name).left().width(120);
             content.add(value).center().width(50);
             content.add(minus).size(32, 32);
