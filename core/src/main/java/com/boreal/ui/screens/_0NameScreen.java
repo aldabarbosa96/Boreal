@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.function.Consumer;
 
-public class NameScreen extends ScreenAdapter {
+public class _0NameScreen extends ScreenAdapter {
 
     // ───────────────── Win95 system‐palette ─────────────────
     private static final Color WIN95_FACE       = Color.valueOf("C0C0C0");
@@ -38,7 +38,7 @@ public class NameScreen extends ScreenAdapter {
     private final Skin skin;
     private final Consumer<String> onNameEntered;
 
-    public NameScreen(Skin skin, Consumer<String> onNameEntered) {
+    public _0NameScreen(Skin skin, Consumer<String> onNameEntered) {
         this.skin = skin;
         this.onNameEntered = onNameEntered;
         ensureWin95Styles(skin);

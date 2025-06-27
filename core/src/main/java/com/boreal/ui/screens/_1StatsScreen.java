@@ -28,7 +28,7 @@ import java.util.EnumMap;
 
 import static com.boreal.assets.GameAssets.manager;
 
-public final class StatsScreen extends ScreenAdapter {
+public final class _1StatsScreen extends ScreenAdapter {
 
     // ───────────────── Win95 system-palette ─────────────────
     private static final Color WIN95_FACE = Color.valueOf("C0C0C0");
@@ -53,7 +53,7 @@ public final class StatsScreen extends ScreenAdapter {
     private final EnumMap<PrimaryStats.Stat, Label> valueLabels = new EnumMap<>(PrimaryStats.Stat.class);
 
     // ───────────────────────── ctor ─────────────────────────
-    public StatsScreen(Skin skin, PrimaryStats stats, Runnable onAccept, String playerName) {
+    public _1StatsScreen(Skin skin, PrimaryStats stats, Runnable onAccept, String playerName) {
         this.skin = skin;
         this.stats = stats;
         this.onAccept = onAccept;
