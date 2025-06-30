@@ -26,7 +26,7 @@ import com.boreal.model.PrimaryStats;
 
 import java.util.EnumMap;
 
-import static com.boreal.assets.GameAssets.manager;
+import static com.boreal.assets.AssetManager.manager;
 
 public final class _1StatsScreen extends ScreenAdapter {
 
@@ -99,7 +99,7 @@ public final class _1StatsScreen extends ScreenAdapter {
         for (PrimaryStats.Stat s : PrimaryStats.Stat.values()) {
 
             // 1️⃣  Icono
-            Texture iconTex = manager.get("icons/" + s.name().toLowerCase() + ".png", Texture.class);
+            Texture iconTex = manager.get("icons/stats/" + s.name().toLowerCase() + ".png", Texture.class);
             iconTex.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
             Image iconImg = new Image(new TextureRegionDrawable(iconTex));
 

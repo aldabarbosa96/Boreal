@@ -5,12 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.boreal.assets.GameAssets;
+import com.boreal.assets.AssetManager;
 import com.boreal.model.PrimaryStats;
+import com.boreal.model.Professions;
 import com.boreal.ui.screens._0NameScreen;
 import com.boreal.ui.screens._1StatsScreen;
 import com.boreal.ui.screens._2ProfessionScreen;
-import com.boreal.ui.screens._2ProfessionScreen.Type;
 
 import java.util.Map;
 
@@ -18,14 +18,14 @@ public final class MainGame extends ApplicationAdapter {
 
     private Skin skin;
     private Screen screen;
-    private GameAssets assets;
+    private AssetManager assets;
 
     @Override
     public void create() {
         // 1) Carga de assets y skin
-        GameAssets.queue();
-        GameAssets.finishLoading();
-        assets = new GameAssets();
+        AssetManager.queue();
+        AssetManager.finishLoading();
+        assets = new AssetManager();
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         // 2) Arrancamos pidiendo el nombre
@@ -36,11 +36,14 @@ public final class MainGame extends ApplicationAdapter {
                 // callback al aceptar stats:
                 () -> {
                     // 4) Tras aceptar stats, mostramos ProfessionScreen
-                    _2ProfessionScreen profScreen = new _2ProfessionScreen(skin, stats, name,
-                        // callback al elegir profesión:
+                    _2ProfessionScreen profScreen = new _2ProfessionScreen(
+                        skin,
+                        stats,
+                        name,
                         newProfessionType -> {
                             // 5) Aplicar bonuses de la profesión a las stats
-                            Map<PrimaryStats.Stat, Integer> bonuses = _2ProfessionScreen.getModifiersFor(newProfessionType);
+                            Map<PrimaryStats.Stat, Integer> bonuses =
+                                Professions.getModifiersFor(newProfessionType);
                             for (Map.Entry<PrimaryStats.Stat, Integer> entry : bonuses.entrySet()) {
                                 PrimaryStats.Stat stat = entry.getKey();
                                 int bonusValue = entry.getValue();
@@ -52,7 +55,9 @@ public final class MainGame extends ApplicationAdapter {
                             // setScreen(new GamePlayScreen(skin, stats, name, newProfessionType));
                         });
                     setScreen(profScreen);
-                }, name);
+                },
+                name
+            );
             setScreen(statsScreen);
         }));
     }
