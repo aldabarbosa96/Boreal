@@ -43,7 +43,7 @@ public final class MainGame extends ApplicationAdapter {
                             }
                         }
                     }
-                    // Siguiente paso...
+                    // todo --> siguiente ventana HABILIDADES
                 });
                 setScreen(profScreen);
             }, name);

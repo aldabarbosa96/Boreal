@@ -1,3 +1,4 @@
+// core/src/main/java/com/boreal/ui/screens/_3ProfessionScreen.java
 package com.boreal.ui.screens;
 
 import com.badlogic.gdx.graphics.Color;
@@ -20,6 +21,7 @@ import static com.boreal.assets.GameAssets.manager;
 
 public final class _3ProfessionScreen extends _0Win95Screen {
     private static final int MAX_SELECTIONS = 5;
+
     private final PrimaryStats stats;
     private final String playerName;
     private final Consumer<List<Professions.Type>> onAccept;
@@ -27,25 +29,19 @@ public final class _3ProfessionScreen extends _0Win95Screen {
 
     private TextButton acceptBtn;
     private TextButton resetBtn;
-    private Label countLabel;  // contador alineado a la derecha
+    private Label countLabel;
 
     public _3ProfessionScreen(Skin skin, PrimaryStats stats, String playerName, Consumer<List<Professions.Type>> onAccept) {
         super(skin);
         this.stats = stats;
         this.playerName = playerName;
         this.onAccept = onAccept;
-    }
-
-    @Override
-    public void show() {
-        super.show();
         enableEscapeToExit();
-        updateButtons();  // inicializa estado de botones y contador
     }
 
     @Override
     protected void buildContent(Table win95) {
-        // ——— Cabecera con jugador a la izquierda y contador a la derecha —————————————————————
+        // ——— Cabecera —————————————————————
         Table header = new Table();
         header.setBackground(new TextureRegionDrawable(makeTitleBackground()));
 
@@ -55,7 +51,6 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         countLabel = new Label(MAX_SELECTIONS + " professions remaining", skin, "win95-title-label");
         countLabel.setAlignment(Align.right);
 
-        // Añadimos dos celdas: nombre expande, contador fijo
         header.add(nameLabel).left().expandX().pad(4, 6, 4, 6);
         header.add(countLabel).right().pad(4, 6, 4, 6);
 
@@ -63,33 +58,29 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         win95.row();
         win95.defaults().pad(8);
 
-        // ——— Grid de profesiones ———
+        // ——— Grid de profesiones (4 columnas) ———
         Table content = new Table();
         content.defaults().pad(4).uniformX().expandX().fillX();
 
-        for (int i = 0; i < Professions.Type.values().length; i++) {
-            Professions.Type t = Professions.Type.values()[i];
-
-            // Carga de textura
+        Professions.Type[] types = Professions.Type.values();
+        for (int i = 0; i < types.length; i++) {
+            Professions.Type t = types[i];
             Texture tex = null;
             if (manager.isLoaded(t.iconPath(), Texture.class)) {
                 tex = manager.get(t.iconPath(), Texture.class);
                 tex.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
             }
 
-            // Botón
             TextButton btn = new TextButton("", skin, "win95");
             btn.align(Align.left);
 
             Table inner = new Table();
             inner.align(Align.left);
 
-            // Texto
             Label lbl = new Label(t.label(), skin, "win95-label-black");
             lbl.setAlignment(Align.left);
             inner.add(lbl).expandX().fillX().padLeft(4);
 
-            // Icono al final
             if (tex != null) {
                 Image icon = new Image(new TextureRegionDrawable(tex));
                 icon.setScaling(Scaling.fit);
@@ -97,11 +88,9 @@ public final class _3ProfessionScreen extends _0Win95Screen {
             }
 
             btn.add(inner).expand().fill().left();
-
-            // Lógica de selección
             btn.addListener(new ChangeListener() {
                 @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                public void changed(ChangeEvent event, Actor actor) {
                     if (selected.contains(t)) {
                         selected.remove(t);
                         btn.setColor(Color.WHITE);
@@ -119,14 +108,14 @@ public final class _3ProfessionScreen extends _0Win95Screen {
 
         win95.add(content).colspan(4).pad(12).fillX();
 
-        // ——— Fila de Reset / Accept ———
+        // ——— Reset / Accept ———
         Table bottom = new Table();
         resetBtn = new TextButton("Reset", skin, "win95");
         acceptBtn = new TextButton("Accept", skin, "win95");
 
         resetBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 selected.clear();
                 content.getChildren().forEach(a -> {
                     if (a instanceof TextButton) ((TextButton) a).setColor(Color.WHITE);
@@ -134,10 +123,9 @@ public final class _3ProfessionScreen extends _0Win95Screen {
                 updateButtons();
             }
         });
-
         acceptBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 onAccept.accept(List.copyOf(selected));
             }
         });
@@ -148,12 +136,22 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         win95.add(bottom).colspan(4).center().padBottom(12);
     }
 
-    private void updateButtons() {
-        // habilita/deshabilita el botón Accept
-        acceptBtn.setDisabled(selected.size() != MAX_SELECTIONS);
+    @Override
+    public void show() {
+        super.show();
+        hud.setPlayerName(playerName);
+        hud.setStats(stats.asMap());
+        hud.setProfessions(selected);
+        hud.setHabilities(List.of());
+        updateButtons();
+    }
 
-        // actualiza el contador
-        int remaining = MAX_SELECTIONS - selected.size();
-        countLabel.setText(remaining + (remaining == 1 ? " profession remaining" : " professions remaining"));
+    private void updateButtons() {
+        acceptBtn.setDisabled(selected.size() != MAX_SELECTIONS);
+        int rem = MAX_SELECTIONS - selected.size();
+        countLabel.setText(rem + (rem == 1 ? " profession remaining" : " professions remaining"));
+
+        hud.setStats(stats.asMap());
+        hud.setProfessions(selected);
     }
 }
