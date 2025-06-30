@@ -3,12 +3,11 @@ package com.boreal.assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 import com.boreal.model.Professions;
-import com.boreal.ui.screens._2ProfessionScreen;
 
 /**
  * Carga y expone todos los recursos del juego.
  */
-public final class AssetManager implements Disposable {
+public final class GameAssets implements Disposable {
 
     public static final com.badlogic.gdx.assets.AssetManager manager = new com.badlogic.gdx.assets.AssetManager();
 

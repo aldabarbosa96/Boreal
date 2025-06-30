@@ -27,8 +27,8 @@ public final class PrimaryStats implements Serializable {
     /* ───── CONFIG ───── */
     private static final int MIN = 1;
     private static final int MAX = 100;
-    private static final int INITIAL_VALUE = 25;
-    private static final int INITIAL_POINTS = 50;
+    private static final int INITIAL_VALUE = 5;
+    private static final int INITIAL_POINTS = 25;
 
     private final EnumMap<Stat, Integer> values = new EnumMap<>(Stat.class);
     private int remainingPoints = INITIAL_POINTS;

@@ -5,12 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.boreal.assets.AssetManager;
+import com.boreal.assets.GameAssets;
 import com.boreal.model.PrimaryStats;
 import com.boreal.model.Professions;
-import com.boreal.ui.screens._0NameScreen;
-import com.boreal.ui.screens._1StatsScreen;
-import com.boreal.ui.screens._2ProfessionScreen;
+import com.boreal.ui.screens._1NameScreen;
+import com.boreal.ui.screens._2StatsScreen;
+import com.boreal.ui.screens._3ProfessionScreen;
 
 import java.util.Map;
 
@@ -18,53 +18,45 @@ public final class MainGame extends ApplicationAdapter {
 
     private Skin skin;
     private Screen screen;
-    private AssetManager assets;
+    private GameAssets assets;
 
     @Override
     public void create() {
         // 1) Carga de assets y skin
-        AssetManager.queue();
-        AssetManager.finishLoading();
-        assets = new AssetManager();
+        GameAssets.queue();
+        GameAssets.finishLoading();
+        assets = new GameAssets();
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         // 2) Arrancamos pidiendo el nombre
-        setScreen(new _0NameScreen(skin, name -> {
-            // 3) Tras introducir nombre, inicializamos stats y mostramos StatsScreen
+        // dentro de create():
+        setScreen(new _1NameScreen(skin, name -> {
             final PrimaryStats stats = new PrimaryStats();
-            _1StatsScreen statsScreen = new _1StatsScreen(skin, stats,
-                // callback al aceptar stats:
-                () -> {
-                    // 4) Tras aceptar stats, mostramos ProfessionScreen
-                    _2ProfessionScreen profScreen = new _2ProfessionScreen(
-                        skin,
-                        stats,
-                        name,
-                        newProfessionType -> {
-                            // 5) Aplicar bonuses de la profesión a las stats
-                            Map<PrimaryStats.Stat, Integer> bonuses =
-                                Professions.getModifiersFor(newProfessionType);
-                            for (Map.Entry<PrimaryStats.Stat, Integer> entry : bonuses.entrySet()) {
-                                PrimaryStats.Stat stat = entry.getKey();
-                                int bonusValue = entry.getValue();
-                                for (int i = 0; i < bonusValue; i++) {
-                                    stats.raise(stat);
-                                }
+            _2StatsScreen statsScreen = new _2StatsScreen(skin, stats, () -> {
+                _3ProfessionScreen profScreen = new _3ProfessionScreen(skin, stats, name, professionList -> {
+                    // Aplica bonuses de cada profesión
+                    for (Professions.Type prof : professionList) {
+                        Map<PrimaryStats.Stat, Integer> bonuses = Professions.getModifiersFor(prof);
+                        for (Map.Entry<PrimaryStats.Stat, Integer> entry : bonuses.entrySet()) {
+                            for (int i = 0; i < entry.getValue(); i++) {
+                                stats.raise(entry.getKey());
                             }
-                            // 6) Aquí podrías seguir al siguiente paso, p.ej.:
-                            // setScreen(new GamePlayScreen(skin, stats, name, newProfessionType));
-                        });
-                    setScreen(profScreen);
-                },
-                name
-            );
+                        }
+                    }
+                    // Siguiente paso...
+                });
+                setScreen(profScreen);
+            }, name);
             setScreen(statsScreen);
         }));
     }
 
     private void setScreen(Screen newScreen) {
+        // dispose anterior
         if (screen != null) screen.dispose();
         screen = newScreen;
+        // ¡invocamos show() para que Win95Screen.buildContent(...) corra!
+        screen.show();
     }
 
     @Override
