@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.boreal.model.PrimaryStats;
 import com.boreal.model.Professions;
+import com.boreal.model.Skills;
 
 import java.util.List;
 import java.util.Map;
@@ -47,41 +48,25 @@ public class HUD extends Table {
         playerWin = createWindow("Player", skin);
         nameValue = new Label("", skin, "win95-label-black");
         nameValue.setColor(Color.WHITE);
-        playerWin.add(nameValue)
-            .expandX().fillX()
-            .pad(4, 6, 4, 6)
-            .align(Align.left)
-            .row();
+        playerWin.add(nameValue).expandX().fillX().pad(4, 6, 4, 6).align(Align.left).row();
 
         // — Stats —
         statsWin = createWindow("Stats", skin);
         statsTable = new Table(skin);
         statsTable.defaults().left().pad(2);
-        statsWin.add(statsTable)
-            .expandX().fillX()
-            .pad(4, 6, 4, 6)
-            .align(Align.left)
-            .row();
+        statsWin.add(statsTable).expandX().fillX().pad(4, 6, 4, 6).align(Align.left).row();
 
         // — Professions —
         profWin = createWindow("Professions", skin);
         profTable = new Table(skin);
         profTable.defaults().left().pad(2);
-        profWin.add(profTable)
-            .expandX().fillX()
-            .pad(4, 6, 4, 6)
-            .align(Align.left)
-            .row();
+        profWin.add(profTable).expandX().fillX().pad(4, 6, 4, 6).align(Align.left).row();
 
         // — Habilities —
         habWin = createWindow("Habilities", skin);
         habTable = new Table(skin);
         habTable.defaults().left().pad(2);
-        habWin.add(habTable)
-            .expandX().fillX()
-            .pad(4, 6, 4, 6)
-            .align(Align.left)
-            .row();
+        habWin.add(habTable).expandX().fillX().pad(4, 6, 4, 6).align(Align.left).row();
 
         // Ahora los cuatro paneles ocupan todo el ancho y alinean su contenido a la izquierda
         add(playerWin).width(HUD_WINDOW_WIDTH).left().row();
@@ -91,11 +76,7 @@ public class HUD extends Table {
     }
 
     private Window createWindow(String titleText, Skin skin) {
-        Window.WindowStyle ws = new Window.WindowStyle(
-            skin.getFont("font-win95"),
-            Color.BLACK,
-            new NinePatchDrawable(makeWin95Frame())
-        );
+        Window.WindowStyle ws = new Window.WindowStyle(skin.getFont("font-win95"), Color.BLACK, new NinePatchDrawable(makeWin95Frame()));
         Window win = new Window("", ws);
         win.pad(0);
         win.padTop(2);
@@ -106,19 +87,17 @@ public class HUD extends Table {
         header.setBackground(new TextureRegionDrawable(makeTitleBackground()));
         Label title = new Label(titleText, skin, "win95-title-label");
         title.setAlignment(Align.left);
-        header.add(title)
-            .left().expandX().fillX()
-            .pad(4, 6, 4, 6);
+        header.add(title).left().expandX().fillX().pad(4, 6, 4, 6);
 
-        win.add(header)
-            .expandX().fillX()
-            .pad(-2, -2, 2, -2);
+        win.add(header).expandX().fillX().pad(-2, -2, 2, -2);
         win.row();
 
         return win;
     }
 
-    /** Solo muestra nombre, puede ser cadena vacía. */
+    /**
+     * Solo muestra nombre, puede ser cadena vacía.
+     */
     public void setPlayerName(String name) {
         nameValue.setText(name);
     }
@@ -133,11 +112,7 @@ public class HUD extends Table {
             Label line = new Label(s.label() + ": " + stats.getOrDefault(s, 0), getSkin(), "win95-label-black");
             line.setColor(Color.WHITE);
             line.setAlignment(Align.left);
-            statsTable.add(line)
-                .expandX().fillX()
-                .pad(2)
-                .align(Align.left)
-                .row();
+            statsTable.add(line).expandX().fillX().pad(2).align(Align.left).row();
         }
     }
 
@@ -151,29 +126,21 @@ public class HUD extends Table {
             Label line = new Label(p.label(), getSkin(), "win95-label-black");
             line.setColor(Color.WHITE);
             line.setAlignment(Align.left);
-            profTable.add(line)
-                .expandX().fillX()
-                .pad(2)
-                .align(Align.left)
-                .row();
+            profTable.add(line).expandX().fillX().pad(2).align(Align.left).row();
         }
     }
 
     /**
      * Rellena habTable **solo** si la lista no está vacía.
      */
-    public void setHabilities(List<String> habs) {
+    public void setHabilities(List<Skills.Skill> habs) {
         habTable.clear();
         if (habs == null || habs.isEmpty()) return;
-        for (String h : habs) {
-            Label line = new Label(h, getSkin(), "win95-label-black");
+        for (Skills.Skill h : habs) {
+            Label line = new Label(h.label(), getSkin(), "win95-label-black");
             line.setColor(Color.WHITE);
             line.setAlignment(Align.left);
-            habTable.add(line)
-                .expandX().fillX()
-                .pad(2)
-                .align(Align.left)
-                .row();
+            habTable.add(line).expandX().fillX().pad(2).align(Align.left).row();
         }
     }
 

@@ -3,13 +3,17 @@ package com.boreal.ui.screens;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.boreal.model.PrimaryStats;
 import com.boreal.model.Professions;
-import com.boreal.model.Skills;
+import com.boreal.model.Skills.Skill;
 import com.boreal.ui.overlay.TooltipUtil;
 import com.boreal.util.DerivedSkillsUtil;
 
@@ -78,19 +82,17 @@ public final class _3ProfessionScreen extends _0Win95Screen {
 
             // Construir texto del tooltip
             // 1) Habilidades derivadas
-            List<Skills.Skill> skills = DerivedSkillsUtil.getDerivedSkills(t);
-            StringBuilder tt = new StringBuilder(t.label())
-                .append(" Skills:\n");
-            for (Skills.Skill sk : skills) {
-                tt.append(" - ").append(sk).append("\n");
+            List<Skill> skills = DerivedSkillsUtil.getDerivedSkills(t);
+            StringBuilder tt = new StringBuilder(t.label()).append(" Skills:\n");
+            for (Skill sk : skills) {
+                tt.append(" - ").append(sk.label()).append("\n");
             }
             // 2) Modificadores de stats
             EnumMap<PrimaryStats.Stat, Integer> mods = Professions.getModifiersFor(t);
             if (!mods.isEmpty()) {
                 tt.append("\nStat bonuses:\n");
                 for (Map.Entry<PrimaryStats.Stat, Integer> e : mods.entrySet()) {
-                    tt.append(" +").append(e.getValue())
-                        .append(" ").append(e.getKey().label()).append("\n");
+                    tt.append(" +").append(e.getValue()).append(" ").append(e.getKey().label()).append("\n");
                 }
             }
 
@@ -99,7 +101,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
             // Selection logic
             btn.addListener(new ChangeListener() {
                 @Override
-                public void changed(ChangeEvent event, Actor actor) {
+                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                     if (selected.contains(t)) {
                         selected.remove(t);
                         btn.setColor(Color.WHITE);
@@ -123,7 +125,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         acceptBtn = new TextButton("Accept", skin, "win95");
         resetBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 selected.clear();
                 content.getChildren().forEach(a -> {
                     if (a instanceof TextButton) ((TextButton) a).setColor(Color.WHITE);
@@ -133,8 +135,11 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         });
         acceptBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 onAccept.accept(new ArrayList<>(selected));
+                // Actualizamos HUD con las skills seleccionadas
+                List<Skill> allSkills = selected.stream().flatMap(p -> DerivedSkillsUtil.getDerivedSkills(p).stream()).distinct().toList();
+                hud.setHabilities(allSkills);
             }
         });
         bottom.add(resetBtn).width(120).padRight(8);
@@ -149,6 +154,8 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         hud.setPlayerName(playerName);
         hud.setStats(stats.asMap());
         hud.setProfessions(selected);
+        // Inicialmente no hay habilidades seleccionadas
+        hud.setHabilities(List.of());
         updateButtons();
     }
 
