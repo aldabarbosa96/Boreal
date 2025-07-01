@@ -66,6 +66,7 @@ public abstract class _0Win95Screen extends ScreenAdapter {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(stage);
         super.show();
         if (!built) {
             buildContent(windowFrame);

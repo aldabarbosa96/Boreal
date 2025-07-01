@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.boreal.assets.GameAssets;
 import com.boreal.model.PrimaryStats;
@@ -27,6 +28,13 @@ public final class MainGame extends ApplicationAdapter {
         GameAssets.finishLoading();
         assets = new GameAssets();
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        TooltipManager manager = TooltipManager.getInstance();
+        manager.initialTime = 0.2f;
+        manager.subsequentTime = 0f;
+        manager.resetTime = 0f;
+        manager.animations = false;
+        manager.maxWidth = 300;
 
         // 2) Arrancamos pidiendo el nombre
         // dentro de create():
