@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.boreal.model.PrimaryStats;
 import com.boreal.model.Professions;
+import com.boreal.model.Skills;
 import com.boreal.ui.overlay.TooltipUtil;
 import com.boreal.util.DerivedSkillsUtil;
 
@@ -77,10 +78,10 @@ public final class _3ProfessionScreen extends _0Win95Screen {
 
             // Construir texto del tooltip
             // 1) Habilidades derivadas
-            List<String> skills = DerivedSkillsUtil.getDerivedSkills(t);
+            List<Skills.Skill> skills = DerivedSkillsUtil.getDerivedSkills(t);
             StringBuilder tt = new StringBuilder(t.label())
                 .append(" Skills:\n");
-            for (String sk : skills) {
+            for (Skills.Skill sk : skills) {
                 tt.append(" - ").append(sk).append("\n");
             }
             // 2) Modificadores de stats
