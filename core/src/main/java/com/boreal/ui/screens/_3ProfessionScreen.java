@@ -79,7 +79,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
 
             Label lbl = new Label(t.label(), skin, "win95-label-black");
             lbl.setAlignment(Align.left);
-            inner.add(lbl).expandX().fillX().padLeft(4);
+            inner.add(lbl).expandX().fillX().padLeft(4).padRight(4);
 
             if (tex != null) {
                 Image icon = new Image(new TextureRegionDrawable(tex));
