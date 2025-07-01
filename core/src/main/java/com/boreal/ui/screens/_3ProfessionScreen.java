@@ -13,7 +13,9 @@ import com.boreal.ui.overlay.TooltipUtil;
 import com.boreal.util.DerivedSkillsUtil;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.boreal.assets.GameAssets.manager;
@@ -59,6 +61,8 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         Professions.Type[] types = Professions.Type.values();
         for (int i = 0; i < types.length; i++) {
             Professions.Type t = types[i];
+
+            // icon
             Texture tex = null;
             if (manager.isLoaded(t.iconPath(), Texture.class)) {
                 tex = manager.get(t.iconPath(), Texture.class);
@@ -66,21 +70,35 @@ public final class _3ProfessionScreen extends _0Win95Screen {
             }
             TextButton btn = new TextButton(t.label(), skin, "win95");
             btn.align(Align.left);
-            // Add icon if available
             if (tex != null) {
                 btn.getLabelCell().padLeft(4);
                 btn.add(new Image(new TextureRegionDrawable(tex))).size(26, 26).padRight(4);
             }
 
-            // Tooltip: derived skills
+            // Construir texto del tooltip
+            // 1) Habilidades derivadas
             List<String> skills = DerivedSkillsUtil.getDerivedSkills(t);
-            String tooltipText = t.label() + " skills:\n" + String.join("\n", skills);
-            TooltipUtil.attachTooltip(btn, tooltipText, skin);
+            StringBuilder tt = new StringBuilder(t.label())
+                .append(" Skills:\n");
+            for (String sk : skills) {
+                tt.append(" - ").append(sk).append("\n");
+            }
+            // 2) Modificadores de stats
+            EnumMap<PrimaryStats.Stat, Integer> mods = Professions.getModifiersFor(t);
+            if (!mods.isEmpty()) {
+                tt.append("\nStat bonuses:\n");
+                for (Map.Entry<PrimaryStats.Stat, Integer> e : mods.entrySet()) {
+                    tt.append(" +").append(e.getValue())
+                        .append(" ").append(e.getKey().label()).append("\n");
+                }
+            }
+
+            TooltipUtil.attachTooltip(btn, tt.toString(), skin);
 
             // Selection logic
             btn.addListener(new ChangeListener() {
                 @Override
-                public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                public void changed(ChangeEvent event, Actor actor) {
                     if (selected.contains(t)) {
                         selected.remove(t);
                         btn.setColor(Color.WHITE);
@@ -95,6 +113,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
             content.add(btn).height(32);
             if ((i + 1) % 4 == 0) content.row();
         }
+
         win95.add(content).colspan(4).pad(12).fillX();
 
         // Reset / Accept
@@ -103,7 +122,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         acceptBtn = new TextButton("Accept", skin, "win95");
         resetBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 selected.clear();
                 content.getChildren().forEach(a -> {
                     if (a instanceof TextButton) ((TextButton) a).setColor(Color.WHITE);
@@ -113,7 +132,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
         });
         acceptBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 onAccept.accept(new ArrayList<>(selected));
             }
         });
