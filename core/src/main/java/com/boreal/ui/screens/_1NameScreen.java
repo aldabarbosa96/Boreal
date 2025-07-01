@@ -1,3 +1,4 @@
+// core/src/main/java/com/boreal/ui/screens/_1NameScreen.java
 package com.boreal.ui.screens;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,6 +13,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public final class _1NameScreen extends _0Win95Screen {
+    private static final int MAX_NAME_LENGTH = 20;
+
     private final Consumer<String> onNameEntered;
     private TextField nameField;
     private Label errorLabel;
@@ -40,6 +43,8 @@ public final class _1NameScreen extends _0Win95Screen {
 
         nameField = new TextField("", skin, "win95-textfield");
         nameField.setMessageText("Type here...");
+        // Limitamos a MAX_NAME_LENGTH caracteres
+        nameField.setMaxLength(MAX_NAME_LENGTH);
         content.add(nameField).width(300).row();
 
         errorLabel = new Label("", skin, "win95-label-blue");
@@ -52,15 +57,24 @@ public final class _1NameScreen extends _0Win95Screen {
                 String name = nameField.getText().trim();
                 if (name.isEmpty()) {
                     errorLabel.setText("Name cannot be empty.");
-                } else {
-                    // Actualizamos el HUD antes de cambiar de pantalla
-                    hud.setPlayerName(name);
-                    // Limpiamos el resto por ahora
-                    hud.setStats(Map.of());
-                    hud.setProfessions(List.of());
-                    hud.setHabilities(List.of());
-                    onNameEntered.accept(name);
+                    return;
                 }
+                // En caso de que el usuario haya pegado más texto,
+                // nos aseguramos de truncarlo.
+                if (name.length() > MAX_NAME_LENGTH) {
+                    name = name.substring(0, MAX_NAME_LENGTH);
+                }
+                // Actualizamos el campo (opcional, para que el usuario lo vea truncado)
+                nameField.setText(name);
+
+                // Actualizamos el HUD antes de cambiar de pantalla
+                hud.setPlayerName(name);
+                // Limpiamos el resto por ahora
+                hud.setStats(Map.of());
+                hud.setProfessions(List.of());
+                hud.setHabilities(List.of());
+
+                onNameEntered.accept(name);
             }
         });
         content.add(acceptBtn).row();

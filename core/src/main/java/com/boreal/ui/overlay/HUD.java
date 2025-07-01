@@ -1,3 +1,4 @@
+// core/src/main/java/com/boreal/ui/overlay/HUD.java
 package com.boreal.ui.overlay;
 
 import com.badlogic.gdx.graphics.Color;
@@ -20,10 +21,11 @@ import java.util.Map;
 
 /**
  * HUD lateral. Cada sección permanece VACÍA hasta que se llame a su setter
- * con datos no vacíos.
+ * con datos no vacíos. Ahora cada panel y sus líneas ocupan todo el ancho
+ * y quedan pegadas al borde izquierdo.
  */
 public class HUD extends Table {
-    private static final float HUD_WINDOW_WIDTH = 300f;
+    private static final float HUD_WINDOW_WIDTH = 175f;
 
     private final Window playerWin;
     private final Label nameValue;
@@ -45,27 +47,43 @@ public class HUD extends Table {
         playerWin = createWindow("Player", skin);
         nameValue = new Label("", skin, "win95-label-black");
         nameValue.setColor(Color.WHITE);
-        playerWin.add(nameValue).fillX().pad(4, 6, 4, 6).row();
+        playerWin.add(nameValue)
+            .expandX().fillX()
+            .pad(4, 6, 4, 6)
+            .align(Align.left)
+            .row();
 
         // — Stats —
         statsWin = createWindow("Stats", skin);
         statsTable = new Table(skin);
         statsTable.defaults().left().pad(2);
-        statsWin.add(statsTable).fillX().pad(4, 6, 4, 6).row();
+        statsWin.add(statsTable)
+            .expandX().fillX()
+            .pad(4, 6, 4, 6)
+            .align(Align.left)
+            .row();
 
         // — Professions —
         profWin = createWindow("Professions", skin);
         profTable = new Table(skin);
         profTable.defaults().left().pad(2);
-        profWin.add(profTable).fillX().pad(4, 6, 4, 6).row();
+        profWin.add(profTable)
+            .expandX().fillX()
+            .pad(4, 6, 4, 6)
+            .align(Align.left)
+            .row();
 
         // — Habilities —
         habWin = createWindow("Habilities", skin);
         habTable = new Table(skin);
         habTable.defaults().left().pad(2);
-        habWin.add(habTable).fillX().pad(4, 6, 4, 6).row();
+        habWin.add(habTable)
+            .expandX().fillX()
+            .pad(4, 6, 4, 6)
+            .align(Align.left)
+            .row();
 
-        // Añadir con ancho fijo
+        // Ahora los cuatro paneles ocupan todo el ancho y alinean su contenido a la izquierda
         add(playerWin).width(HUD_WINDOW_WIDTH).left().row();
         add(statsWin).width(HUD_WINDOW_WIDTH).left().row();
         add(profWin).width(HUD_WINDOW_WIDTH).left().row();
@@ -73,40 +91,53 @@ public class HUD extends Table {
     }
 
     private Window createWindow(String titleText, Skin skin) {
-        Window.WindowStyle ws = new Window.WindowStyle(skin.getFont("font-win95"), Color.BLACK, new NinePatchDrawable(makeWin95Frame()));
+        Window.WindowStyle ws = new Window.WindowStyle(
+            skin.getFont("font-win95"),
+            Color.BLACK,
+            new NinePatchDrawable(makeWin95Frame())
+        );
         Window win = new Window("", ws);
         win.pad(0);
         win.padTop(2);
+        // Asegura que todo el contenido empiece en la esquina superior izquierda
+        win.align(Align.topLeft);
 
         Table header = new Table(skin);
         header.setBackground(new TextureRegionDrawable(makeTitleBackground()));
         Label title = new Label(titleText, skin, "win95-title-label");
         title.setAlignment(Align.left);
-        header.add(title).left().expandX().fillX().pad(4, 6, 4, 6);
+        header.add(title)
+            .left().expandX().fillX()
+            .pad(4, 6, 4, 6);
 
-        win.add(header).expandX().fillX().pad(-2, -2, 2, -2);
+        win.add(header)
+            .expandX().fillX()
+            .pad(-2, -2, 2, -2);
         win.row();
 
         return win;
     }
 
-    /**
-     * Solo muestra nombre, puede ser cadena vacía.
-     */
+    /** Solo muestra nombre, puede ser cadena vacía. */
     public void setPlayerName(String name) {
         nameValue.setText(name);
     }
 
     /**
-     * Rellena statsTable **solo** si stats no está vacío. Si es vacío, deja el panel sin filas.
+     * Rellena statsTable **solo** si stats no está vacío.
      */
     public void setStats(Map<PrimaryStats.Stat, Integer> stats) {
         statsTable.clear();
-        if (stats == null || stats.isEmpty()) return;  // nada que mostrar
+        if (stats == null || stats.isEmpty()) return;
         for (PrimaryStats.Stat s : PrimaryStats.Stat.values()) {
             Label line = new Label(s.label() + ": " + stats.getOrDefault(s, 0), getSkin(), "win95-label-black");
             line.setColor(Color.WHITE);
-            statsTable.add(line).row();
+            line.setAlignment(Align.left);
+            statsTable.add(line)
+                .expandX().fillX()
+                .pad(2)
+                .align(Align.left)
+                .row();
         }
     }
 
@@ -119,7 +150,12 @@ public class HUD extends Table {
         for (Professions.Type p : profs) {
             Label line = new Label(p.label(), getSkin(), "win95-label-black");
             line.setColor(Color.WHITE);
-            profTable.add(line).row();
+            line.setAlignment(Align.left);
+            profTable.add(line)
+                .expandX().fillX()
+                .pad(2)
+                .align(Align.left)
+                .row();
         }
     }
 
@@ -132,7 +168,12 @@ public class HUD extends Table {
         for (String h : habs) {
             Label line = new Label(h, getSkin(), "win95-label-black");
             line.setColor(Color.WHITE);
-            habTable.add(line).row();
+            line.setAlignment(Align.left);
+            habTable.add(line)
+                .expandX().fillX()
+                .pad(2)
+                .align(Align.left)
+                .row();
         }
     }
 

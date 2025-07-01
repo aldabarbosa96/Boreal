@@ -1,3 +1,4 @@
+// core/src/main/java/com/boreal/ui/screens/_2StatsScreen.java
 package com.boreal.ui.screens;
 
 import com.badlogic.gdx.Input;
@@ -38,9 +39,9 @@ public final class _2StatsScreen extends _0Win95Screen {
     public void show() {
         super.show();
 
-        // Al mostrar, actualizamos inmediatamente el HUD con el nombre
+        // Al mostrar, solo actualizamos el HUD con el nombre (stats vacíos hasta confirmar)
         hud.setPlayerName(playerName);
-        hud.setStats(stats.asMap());
+        hud.setStats(java.util.Map.of());
         hud.setProfessions(java.util.List.of());
         hud.setHabilities(java.util.List.of());
 
@@ -131,6 +132,8 @@ public final class _2StatsScreen extends _0Win95Screen {
         acceptBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent e, Actor a) {
+                // Actualizar HUD tras confirmar stats
+                hud.setStats(stats.asMap());
                 onAccept.run();
             }
         });
