@@ -2,17 +2,16 @@ package com.boreal.model;
 
 import java.io.Serializable;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Representa todas las habilidades derivadas definidas en DerivedSkillsUtil.
  * Cada habilidad tendrá un nivel numérico entre MIN y MAX.
+ * Se puede aplicar un nivel base (por profesiones) y luego distribuir puntos extra.
  */
 public final class Skills implements Serializable {
 
-    /**
-     * Enumeración de todas las habilidades posibles (extraídas de DerivedSkillsUtil).
-     */
     public enum Skill {
         ADMINISTRACION_DE_FARMACOS("Administración de fármacos"),
         AJUSTE_FINO_DE_MAQUINARIA("Ajuste fino de maquinaria"),
@@ -146,23 +145,99 @@ public final class Skills implements Serializable {
     }
 
     // ===== CONFIGURACIÓN =====
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int INITIAL = 0;
+    public static final int MIN = 0;
+    public static final int MAX = 10;
 
+    /** Nivel base asignado (por profesión) */
+    private final EnumMap<Skill, Integer> baseLevels = new EnumMap<>(Skill.class);
+    /** Nivel actual (baseLevels + puntos repartidos por el jugador) */
     private final EnumMap<Skill, Integer> values = new EnumMap<>(Skill.class);
+    /** Puntos restantes para repartir tras aplicar el base */
+    private int remainingPoints = 0;
 
-    public Skills() { reset(); }
+    public Skills() {
+        reset();
+    }
+
+    /** Vuelve todo a 0 y sin puntos para repartir */
     public void reset() {
-        for (Skill s : Skill.values()) values.put(s, INITIAL);
+        for (Skill s : Skill.values()) {
+            baseLevels.put(s, MIN);
+            values.put(s, MIN);
+        }
+        remainingPoints = 0;
     }
-    public int get(Skill s) { return values.get(s); }
+
+    public void applyBase(Map<Skill,Integer> basePoints) {
+        for (var entry : basePoints.entrySet()) {
+            Skill s = entry.getKey();
+            int points = entry.getValue();
+            int b = Math.min(MAX, baseLevels.get(s) + points);
+            baseLevels.put(s, b);
+            values.put(s, b);
+        }
+    }
+
+    /**
+     * Inicializa los puntos que el jugador puede repartir libremente.
+     * Debe invocarse *después* de todas las llamadas a applyBase().
+     *
+     * @param totalPoints puntos libres que el jugador podrá repartir
+     */
+    public void setDistributablePoints(int totalPoints) {
+        this.remainingPoints = totalPoints;
+    }
+
+    /** Devuelve cuántos puntos le quedan al jugador para repartir */
+    public int getRemainingPoints() {
+        return remainingPoints;
+    }
+
+    /**
+     * Intenta subir +1 nivel de la habilidad si hay puntos restantes
+     * y no se supera MAX.
+     */
     public boolean raise(Skill s) {
-        int cur = values.get(s); if (cur >= MAX) return false; values.put(s, cur+1); return true;
+        int cur = values.get(s);
+        if (remainingPoints > 0 && cur < MAX) {
+            values.put(s, cur + 1);
+            remainingPoints--;
+            return true;
+        }
+        return false;
     }
+
+    /**
+     * Intenta bajar –1 nivel de la habilidad si no baja del nivel base
+     * y reembolsa un punto repartible.
+     */
     public boolean lower(Skill s) {
-        int cur = values.get(s); if (cur <= MIN) return false; values.put(s, cur-1); return true;
+        int cur = values.get(s);
+        int base = baseLevels.get(s);
+        if (cur > base) {
+            values.put(s, cur - 1);
+            remainingPoints++;
+            return true;
+        }
+        return false;
     }
-    public Map<Skill, Integer> asMap() { return Map.copyOf(values); }
-    @Override public String toString() { return values.toString(); }
+
+    /** Obtiene el nivel actual de la habilidad */
+    public int get(Skill s) {
+        return values.get(s);
+    }
+
+    /** Copia inmutable de todos los niveles actuales */
+    public Map<Skill, Integer> asMap() {
+        return Map.copyOf(values);
+    }
+
+    @Override
+    public String toString() {
+        return "Skills{" +
+            "values=" + values +
+            ", base=" + baseLevels +
+            ", remaining=" + remainingPoints +
+            '}';
+    }
 }
