@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.boreal.assets.GameAssets;
 import com.boreal.model.PrimaryStats;
 import com.boreal.model.Professions;
+import com.boreal.model.Skills;
 import com.boreal.ui.screens._1NameScreen;
 import com.boreal.ui.screens._2StatsScreen;
 import com.boreal.ui.screens._3ProfessionScreen;
@@ -36,12 +37,14 @@ public final class MainGame extends ApplicationAdapter {
         manager.animations = false;
         manager.maxWidth = 300;
 
+        Skills skills = new Skills();
+
         // 2) Arrancamos pidiendo el nombre
         // dentro de create():
         setScreen(new _1NameScreen(skin, name -> {
             final PrimaryStats stats = new PrimaryStats();
             _2StatsScreen statsScreen = new _2StatsScreen(skin, stats, () -> {
-                _3ProfessionScreen profScreen = new _3ProfessionScreen(skin, stats, name, professionList -> {
+                _3ProfessionScreen profScreen = new _3ProfessionScreen(skin, stats,skills, name, professionList -> {
                     // Aplica bonuses de cada profesión
                     for (Professions.Type prof : professionList) {
                         Map<PrimaryStats.Stat, Integer> bonuses = Professions.getModifiersFor(prof);

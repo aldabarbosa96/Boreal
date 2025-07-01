@@ -2,7 +2,6 @@ package com.boreal.model;
 
 import java.io.Serializable;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -169,7 +168,7 @@ public final class Skills implements Serializable {
     }
 
     public void applyBase(Map<Skill,Integer> basePoints) {
-        for (var entry : basePoints.entrySet()) {
+        for (Map.Entry<Skill, Integer> entry : basePoints.entrySet()) {
             Skill s = entry.getKey();
             int points = entry.getValue();
             int b = Math.min(MAX, baseLevels.get(s) + points);

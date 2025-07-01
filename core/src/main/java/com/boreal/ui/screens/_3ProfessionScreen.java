@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.boreal.model.PrimaryStats;
 import com.boreal.model.Professions;
+import com.boreal.model.Skills;
 import com.boreal.model.Skills.Skill;
 import com.boreal.ui.overlay.TooltipUtil;
 import com.boreal.ui.overlay.TooltipData;
@@ -24,7 +25,7 @@ import static com.boreal.assets.GameAssets.manager;
 
 public final class _3ProfessionScreen extends _0Win95Screen {
     private static final int MAX_SELECTIONS = 5;
-
+    private final Skills skills;
     private final PrimaryStats stats;
     private final String playerName;
     private final Consumer<List<Professions.Type>> onAccept;
@@ -34,9 +35,10 @@ public final class _3ProfessionScreen extends _0Win95Screen {
     private TextButton resetBtn;
     private Label countLabel;
 
-    public _3ProfessionScreen(Skin skin, PrimaryStats stats, String playerName, Consumer<List<Professions.Type>> onAccept) {
+    public _3ProfessionScreen(Skin skin, PrimaryStats stats, Skills skills, String playerName, Consumer<List<Professions.Type>> onAccept) {
         super(skin);
         this.stats = stats;
+        this.skills = skills;
         this.playerName = playerName;
         this.onAccept = onAccept;
         enableEscapeToExit();
