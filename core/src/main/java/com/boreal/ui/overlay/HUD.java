@@ -22,16 +22,12 @@ import java.util.Map;
  */
 public class HUD extends Table {
     private static final float HUD_WINDOW_WIDTH = 200f;
-
     private final Window playerWin;
     private final Label nameValue;
-
     private final Window statsWin;
     private final Table statsTable;
-
     private final Window profWin;
     private final Table profTable;
-
     private final Window habWin;
     private final Table habTable;
 

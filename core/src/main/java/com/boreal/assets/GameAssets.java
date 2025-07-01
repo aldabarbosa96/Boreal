@@ -1,19 +1,14 @@
 package com.boreal.assets;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
 import com.boreal.model.Professions;
 
-/**
- * Carga y expone todos los recursos del juego.
- */
 public final class GameAssets implements Disposable {
 
-    public static final com.badlogic.gdx.assets.AssetManager manager = new com.badlogic.gdx.assets.AssetManager();
+    public static final AssetManager manager = new com.badlogic.gdx.assets.AssetManager();
 
-    /**
-     * Lanza las peticiones de carga (llámalo una sola vez al iniciar).
-     */
     public static void queue() {
         // -- iconos de stats --
         String base = "icons/stats/";
