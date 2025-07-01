@@ -29,12 +29,12 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.boreal.ui.overlay.HUD;
 
 public abstract class _0Win95Screen extends ScreenAdapter {
-    private static final Color WIN95_FACE       = Color.valueOf("C0C0C0");
-    private static final Color WIN95_HIGHLIGHT  = Color.valueOf("FFFFFF");
-    private static final Color WIN95_SHADOW     = Color.valueOf("808080");
+    private static final Color WIN95_FACE = Color.valueOf("C0C0C0");
+    private static final Color WIN95_HIGHLIGHT = Color.valueOf("FFFFFF");
+    private static final Color WIN95_SHADOW = Color.valueOf("808080");
     private static final Color WIN95_DARKSHADOW = Color.valueOf("404040");
-    private static final Color WIN95_TEXT       = Color.valueOf("000000");
-    private static final Color WIN95_TITLE      = Color.valueOf("000080");
+    private static final Color WIN95_TEXT = Color.valueOf("000000");
+    private static final Color WIN95_TITLE = Color.valueOf("000080");
 
     protected final Stage stage;
     protected final Skin skin;
@@ -137,9 +137,13 @@ public abstract class _0Win95Screen extends ScreenAdapter {
 
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/IBMPlexSans-Regular.ttf"));
         FreeTypeFontParameter p14 = new FreeTypeFontParameter();
-        p14.size = 14; p14.minFilter = TextureFilter.Nearest; p14.magFilter = TextureFilter.Nearest;
+        p14.size = 14;
+        p14.minFilter = TextureFilter.Nearest;
+        p14.magFilter = TextureFilter.Nearest;
         FreeTypeFontParameter p18 = new FreeTypeFontParameter();
-        p18.size = 18; p18.minFilter = TextureFilter.Nearest; p18.magFilter = TextureFilter.Nearest;
+        p18.size = 18;
+        p18.minFilter = TextureFilter.Nearest;
+        p18.magFilter = TextureFilter.Nearest;
         BitmapFont font14 = gen.generateFont(p14);
         BitmapFont font18 = gen.generateFont(p18);
         gen.dispose();
@@ -147,35 +151,35 @@ public abstract class _0Win95Screen extends ScreenAdapter {
         sk.add("font-win95", font14, BitmapFont.class);
         sk.add("font-win95-title", font18, BitmapFont.class);
         sk.add("win95-label-black", new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font14, WIN95_TEXT));
-        sk.add("win95-label-blue",  new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font14, WIN95_TITLE));
+        sk.add("win95-label-blue", new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font14, WIN95_TITLE));
         sk.add("win95-title-label", new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font18, Color.WHITE));
 
-        TextButtonStyle btnStyle = new TextButtonStyle(
-            new NinePatchDrawable(makeBtnBg(false)),
-            new NinePatchDrawable(makeBtnBg(true)),
-            null,
-            font14
-        );
+        TextButtonStyle btnStyle = new TextButtonStyle(new NinePatchDrawable(makeBtnBg(false)), new NinePatchDrawable(makeBtnBg(true)), null, font14);
         btnStyle.fontColor = WIN95_TEXT;
         sk.add("win95", btnStyle);
 
-        com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle tfStyle =
-            new com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle();
-        tfStyle.font             = font14;
-        tfStyle.fontColor        = WIN95_TEXT;
+        com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle tfStyle = new com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle();
+        tfStyle.font = font14;
+        tfStyle.fontColor = WIN95_TEXT;
         tfStyle.messageFontColor = WIN95_SHADOW;
-        tfStyle.cursor           = new TextureRegionDrawable(makeCursor());
-        tfStyle.background       = new NinePatchDrawable(makeTextFieldBg());
+        tfStyle.cursor = new TextureRegionDrawable(makeCursor());
+        tfStyle.background = new NinePatchDrawable(makeTextFieldBg());
         sk.add("win95-textfield", tfStyle);
     }
 
     protected NinePatch makeWin95Frame() {
         int S = 64, B = 6;
         Pixmap pm = new Pixmap(S, S, Format.RGBA8888);
-        pm.setColor(WIN95_FACE);       pm.fill();
-        pm.setColor(WIN95_HIGHLIGHT);  pm.drawLine(0, 0, S - 1, 0); pm.drawLine(0, 1, 0, S - 1);
-        pm.setColor(WIN95_DARKSHADOW); pm.drawLine(0, S - 1, S - 1, S - 1); pm.drawLine(S - 1, 0, S - 1, S - 1);
-        pm.setColor(WIN95_SHADOW);     pm.drawRectangle(1, 1, S - 2, S - 2);
+        pm.setColor(WIN95_FACE);
+        pm.fill();
+        pm.setColor(WIN95_HIGHLIGHT);
+        pm.drawLine(0, 0, S - 1, 0);
+        pm.drawLine(0, 1, 0, S - 1);
+        pm.setColor(WIN95_DARKSHADOW);
+        pm.drawLine(0, S - 1, S - 1, S - 1);
+        pm.drawLine(S - 1, 0, S - 1, S - 1);
+        pm.setColor(WIN95_SHADOW);
+        pm.drawRectangle(1, 1, S - 2, S - 2);
         NinePatch np = new NinePatch(new Texture(pm), B, B, B, B);
         pm.dispose();
         return np;
@@ -184,10 +188,14 @@ public abstract class _0Win95Screen extends ScreenAdapter {
     protected NinePatch makeBtnBg(boolean pressed) {
         int S = 32, B = 4;
         Pixmap pm = new Pixmap(S, S, Format.RGBA8888);
-        pm.setColor(WIN95_FACE); pm.fill();
+        pm.setColor(WIN95_FACE);
+        pm.fill();
         pm.setColor(pressed ? WIN95_SHADOW : WIN95_HIGHLIGHT);
-        pm.drawLine(0, 0, S - 2, 0); pm.drawLine(0, 1, 0, S - 2);
-        pm.setColor(WIN95_DARKSHADOW); pm.drawLine(0, S - 1, S - 1, S - 1); pm.drawLine(S - 1, 0, S - 1, S - 2);
+        pm.drawLine(0, 0, S - 2, 0);
+        pm.drawLine(0, 1, 0, S - 2);
+        pm.setColor(WIN95_DARKSHADOW);
+        pm.drawLine(0, S - 1, S - 1, S - 1);
+        pm.drawLine(S - 1, 0, S - 1, S - 2);
         NinePatch np = new NinePatch(new Texture(pm), B, B, B, B);
         pm.dispose();
         return np;
@@ -196,10 +204,16 @@ public abstract class _0Win95Screen extends ScreenAdapter {
     protected NinePatch makeTextFieldBg() {
         int W = 200, H = 24, B = 4;
         Pixmap pm = new Pixmap(W, H, Format.RGBA8888);
-        pm.setColor(WIN95_FACE); pm.fill();
-        pm.setColor(WIN95_HIGHLIGHT); pm.drawLine(0, 0, W - 1, 0); pm.drawLine(0, 1, 0, H - 1);
-        pm.setColor(WIN95_DARKSHADOW); pm.drawLine(0, H - 1, W - 1, H - 1); pm.drawLine(W - 1, 0, W - 1, H - 1);
-        pm.setColor(WIN95_SHADOW); pm.drawRectangle(1, 1, W - 2, H - 2);
+        pm.setColor(WIN95_FACE);
+        pm.fill();
+        pm.setColor(WIN95_HIGHLIGHT);
+        pm.drawLine(0, 0, W - 1, 0);
+        pm.drawLine(0, 1, 0, H - 1);
+        pm.setColor(WIN95_DARKSHADOW);
+        pm.drawLine(0, H - 1, W - 1, H - 1);
+        pm.drawLine(W - 1, 0, W - 1, H - 1);
+        pm.setColor(WIN95_SHADOW);
+        pm.drawRectangle(1, 1, W - 2, H - 2);
         NinePatch np = new NinePatch(new Texture(pm), B, B, B, B);
         pm.dispose();
         return np;

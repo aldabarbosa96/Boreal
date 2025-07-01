@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.boreal.model.PrimaryStats;
 import com.boreal.ui.overlay.TooltipUtil;
+import com.boreal.ui.overlay.TooltipData;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -66,15 +67,13 @@ public final class _2StatsScreen extends _0Win95Screen {
 
         for (PrimaryStats.Stat s : PrimaryStats.Stat.values()) {
             // 1) Crea icono, etiqueta y valor
-            Image iconImg = new Image(new TextureRegionDrawable(
-                manager.get("icons/stats/" + s.name().toLowerCase() + ".png", Texture.class)
-            ));
+            Image iconImg = new Image(new TextureRegionDrawable(manager.get("icons/stats/" + s.name().toLowerCase() + ".png", Texture.class)));
             Label nameLbl = new Label(s.label(), skin, "win95-label-black");
             Label valueLbl = new Label(String.valueOf(stats.get(s)), skin, "win95-label-blue");
             valueLabels.put(s, valueLbl);
 
             TextButton minus = new TextButton("-", skin, "win95");
-            TextButton plus  = new TextButton("+", skin, "win95");
+            TextButton plus = new TextButton("+", skin, "win95");
 
             // 2) Construye un contenedor que engloba icono+nombre y reciba el hover:
             Table statHitbox = new Table();
@@ -84,12 +83,8 @@ public final class _2StatsScreen extends _0Win95Screen {
             statHitbox.pack();
             statHitbox.setTouchable(Touchable.enabled);
 
-            // 3) Asocia tooltip al hitbox (no al icono ni label por separado)
-            String tooltipText = String.format(
-                "%s: %d\n\n%s",
-                s.label(), stats.get(s), getStatDescription(s)
-            );
-            TooltipUtil.attachTooltip(statHitbox, tooltipText, skin);
+            // 3) Asocia tooltip, usando TooltipData
+            TooltipUtil.attachTooltip(statHitbox, TooltipData.statTooltip(s, stats.get(s)), skin);
 
             // 4) Lo añadimos al layout junto al valor y botones
             content.add(statHitbox);
@@ -110,11 +105,8 @@ public final class _2StatsScreen extends _0Win95Screen {
                 public void changed(ChangeEvent e, Actor a) {
                     if (stats.raise(s)) {
                         valueLbl.setText(String.valueOf(stats.get(s)));
-                        // actualizar texto del tooltip
-                        TooltipUtil.attachTooltip(statHitbox,
-                            String.format("%s: %d\n\n%s", s.label(), stats.get(s), getStatDescription(s)),
-                            skin
-                        );
+                        // actualizar tooltip con nuevo valor
+                        TooltipUtil.attachTooltip(statHitbox, TooltipData.statTooltip(s, stats.get(s)), skin);
                         refresher.changed(e, a);
                     }
                 }
@@ -124,10 +116,7 @@ public final class _2StatsScreen extends _0Win95Screen {
                 public void changed(ChangeEvent e, Actor a) {
                     if (stats.lower(s)) {
                         valueLbl.setText(String.valueOf(stats.get(s)));
-                        TooltipUtil.attachTooltip(statHitbox,
-                            String.format("%s: %d\n\n%s", s.label(), stats.get(s), getStatDescription(s)),
-                            skin
-                        );
+                        TooltipUtil.attachTooltip(statHitbox, TooltipData.statTooltip(s, stats.get(s)), skin);
                         refresher.changed(e, a);
                     }
                 }
@@ -141,7 +130,7 @@ public final class _2StatsScreen extends _0Win95Screen {
 
         // Reset / Accept
         content.row().padTop(24).padBottom(12);
-        resetBtn  = new TextButton("Reset", skin, "win95");
+        resetBtn = new TextButton("Reset", skin, "win95");
         acceptBtn = new TextButton("Accept", skin, "win95");
         resetBtn.addListener(new ChangeListener() {
             @Override
@@ -186,28 +175,5 @@ public final class _2StatsScreen extends _0Win95Screen {
                 return false;
             }
         });
-    }
-
-    private String getStatDescription(PrimaryStats.Stat s) {
-        switch (s) {
-            case STRENGTH:
-                return "Aumenta el daño cuerpo a cuerpo\nAumenta el peso que puedes cargar.";
-            case AGILITY:
-                return "Mejora la velocidad de ataque\nAumenta la probabilidad de evasión.";
-            case ENDURANCE:
-                return "Incrementa la salud máxima\nMejora la resistencia al daño.";
-            case INTELLIGENCE:
-                return "Aumenta la experiencia ganada\nEficacia en habilidades técnicas.";
-            case PERCEPTION:
-                return "Mejora la puntería y precisión\nAumenta la detección de peligros.";
-            case CHARISMA:
-                return "Mejora las opciones de compra/venta\nAumenta las opciones de diálogo.";
-            case WILLPOWER:
-                return "Reduce el coste de habilidades especiales\ny resistencia al estrés.";
-            case LUCK:
-                return "Aumenta la probabilidad de críticos\ny hallazgos raros.";
-            default:
-                return "";
-        }
     }
 }
