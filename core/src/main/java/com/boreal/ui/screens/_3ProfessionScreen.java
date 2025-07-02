@@ -13,12 +13,10 @@ import com.boreal.model.Skills;
 import com.boreal.model.Skills.Skill;
 import com.boreal.ui.overlay.TooltipUtil;
 import com.boreal.ui.overlay.TooltipData;
-import com.boreal.util.DerivedSkillsUtil;
+import com.boreal.model.DerivedSkills;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.boreal.assets.GameAssets.manager;
@@ -133,7 +131,7 @@ public final class _3ProfessionScreen extends _0Win95Screen {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 onAccept.accept(new ArrayList<>(selected));
-                List<Skill> allSkills = selected.stream().flatMap(p -> DerivedSkillsUtil.getDerivedSkills(p).stream()).distinct().toList();
+                List<Skill> allSkills = selected.stream().flatMap(p -> DerivedSkills.getDerivedSkills(p).stream()).distinct().toList();
                 hud.setHabilities(allSkills);
             }
         });

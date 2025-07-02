@@ -116,7 +116,7 @@ public class HUD extends Table {
         statsTable.clear();
         if (stats == null || stats.isEmpty()) return;
         for (PrimaryStats.Stat s : PrimaryStats.Stat.values()) {
-            Label line = new Label("- " + s.label() + ": " + stats.getOrDefault(s, 0), whiteStyle);
+            Label line = new Label(" - " + s.label() + ": " + stats.getOrDefault(s, 0), whiteStyle);
             line.setWrap(true);
             line.setAlignment(Align.left);
             statsTable.add(line).expandX().fillX().pad(2).row();
@@ -130,7 +130,7 @@ public class HUD extends Table {
         profTable.clear();
         if (profs == null || profs.isEmpty()) return;
         for (Professions.Type p : profs) {
-            Label line = new Label("- " + p.label(), whiteStyle);
+            Label line = new Label(" - " + p.label(), whiteStyle);
             line.setWrap(true);
             line.setAlignment(Align.left);
             profTable.add(line).expandX().fillX().pad(2).row();
@@ -144,7 +144,7 @@ public class HUD extends Table {
         habTable.clear();
         if (habs == null || habs.isEmpty()) return;
         for (Skills.Skill h : habs) {
-            Label line = new Label("- " + h.label(), whiteStyle);
+            Label line = new Label(" - " + h.label(), whiteStyle);
             line.setWrap(true);
             line.setAlignment(Align.left);
             habTable.add(line).expandX().fillX().pad(2).row();

@@ -1,6 +1,5 @@
-package com.boreal.util;
+package com.boreal.model;
 
-import com.boreal.model.Professions;
 import com.boreal.model.Skills.Skill;
 
 import java.util.Collections;
@@ -10,7 +9,7 @@ import java.util.List;
 /**
  * Mapa de habilidades derivadas/secundarias por profesión.
  */
-public final class DerivedSkillsUtil {
+public final class DerivedSkills {
     private static final EnumMap<Professions.Type, List<Skill>> SKILLS_MAP = new EnumMap<>(Professions.Type.class);
 
     static {
@@ -109,7 +108,7 @@ public final class DerivedSkillsUtil {
     }
 
 
-    private DerivedSkillsUtil() { /* no instancias */ }
+    private DerivedSkills() { /* no instancias */ }
 
     /**
      * Devuelve la lista de habilidades derivadas para una profesión dada.
