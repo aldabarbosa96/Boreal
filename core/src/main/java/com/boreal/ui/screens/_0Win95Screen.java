@@ -18,9 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -150,15 +148,16 @@ public abstract class _0Win95Screen extends ScreenAdapter {
 
         sk.add("font-win95", font14, BitmapFont.class);
         sk.add("font-win95-title", font18, BitmapFont.class);
-        sk.add("win95-label-black", new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font14, WIN95_TEXT));
-        sk.add("win95-label-blue", new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font14, WIN95_TITLE));
-        sk.add("win95-title-label", new com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle(font18, Color.WHITE));
+        sk.add("win95-label-black", new Label.LabelStyle(font14, WIN95_TEXT));
+        sk.add("win95-label-blue", new Label.LabelStyle(font14, WIN95_TITLE));
+        sk.add("win95-title-label", new Label.LabelStyle(font18, Color.WHITE));
+        sk.add("hud-subtitle",      new Label.LabelStyle(font18, Color.WHITE));
 
         TextButtonStyle btnStyle = new TextButtonStyle(new NinePatchDrawable(makeBtnBg(false)), new NinePatchDrawable(makeBtnBg(true)), null, font14);
         btnStyle.fontColor = WIN95_TEXT;
         sk.add("win95", btnStyle);
 
-        com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle tfStyle = new com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle();
+        TextField.TextFieldStyle tfStyle = new TextField.TextFieldStyle();
         tfStyle.font = font14;
         tfStyle.fontColor = WIN95_TEXT;
         tfStyle.messageFontColor = WIN95_SHADOW;

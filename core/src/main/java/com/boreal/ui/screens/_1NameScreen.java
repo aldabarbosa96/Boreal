@@ -1,4 +1,3 @@
-// core/src/main/java/com/boreal/ui/screens/_1NameScreen.java
 package com.boreal.ui.screens;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -6,16 +5,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.boreal.ui.overlay.HUD;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public final class _1NameScreen extends _0Win95Screen {
-    private static final int MAX_NAME_LENGTH = 20;
 
+    private static final int MAX_NAME_LENGTH = 20;
     private final Consumer<String> onNameEntered;
+
     private TextField nameField;
     private Label errorLabel;
     private TextButton acceptBtn;
@@ -25,25 +24,28 @@ public final class _1NameScreen extends _0Win95Screen {
         this.onNameEntered = onNameEntered;
     }
 
+    /*────────────────────────────── UI ──────────────────────────────*/
+
     @Override
     protected void buildContent(Table win95) {
-        // ——— Cabecera —————————————————————
+
+        /*— cabecera —*/
         Table header = new Table();
         header.setBackground(new TextureRegionDrawable(makeTitleBackground()));
         Label title = new Label("Enter your name", skin, "win95-title-label");
         title.setAlignment(Align.left);
         header.add(title).left().expandX().fillX().pad(4, 6, 4, 6);
+
         win95.add(header).fillX().pad(-2, -2, 2, -2);
         win95.row();
         win95.defaults().pad(8);
 
-        // ——— Formulario de nombre —————————————————
+        /*— formulario —*/
         Table content = new Table();
         content.defaults().pad(8);
 
         nameField = new TextField("", skin, "win95-textfield");
         nameField.setMessageText("Type here...");
-        // Limitamos a MAX_NAME_LENGTH caracteres
         nameField.setMaxLength(MAX_NAME_LENGTH);
         content.add(nameField).width(300).row();
 
@@ -53,26 +55,20 @@ public final class _1NameScreen extends _0Win95Screen {
         acceptBtn = new TextButton("Accept", skin, "win95");
         acceptBtn.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent e, Actor a) {
+
                 String name = nameField.getText().trim();
                 if (name.isEmpty()) {
                     errorLabel.setText("Name cannot be empty.");
                     return;
                 }
-                // En caso de que el usuario haya pegado más texto,
-                // nos aseguramos de truncarlo.
-                if (name.length() > MAX_NAME_LENGTH) {
-                    name = name.substring(0, MAX_NAME_LENGTH);
-                }
-                // Actualizamos el campo (opcional, para que el usuario lo vea truncado)
+                if (name.length() > MAX_NAME_LENGTH) name = name.substring(0, MAX_NAME_LENGTH);
                 nameField.setText(name);
 
-                // Actualizamos el HUD antes de cambiar de pantalla
+                /* Actualizamos HUD */
                 hud.setPlayerName(name);
-                // Limpiamos el resto por ahora
-                hud.setStats(Map.of());
-                hud.setProfessions(List.of());
-                hud.setHabilities(List.of());
+                hud.setStatsAndDerived(Map.of(), Map.of());
+                hud.setProfessionsAndSkills(List.of(), List.of());
 
                 onNameEntered.accept(name);
             }
@@ -87,10 +83,11 @@ public final class _1NameScreen extends _0Win95Screen {
         super.show();
         enableEnterSubmit();
         enableEscapeToExit();
-        // Inicializamos el HUD con valores vacíos
+
+        /* HUD limpio */
         hud.setPlayerName("");
-        hud.setStats(Map.of());
-        hud.setProfessions(List.of());
-        hud.setHabilities(List.of());
+        hud.setStatsAndDerived(Map.of(), Map.of());
+        hud.setProfessionsAndSkills(List.of(), List.of());
     }
 }
+
